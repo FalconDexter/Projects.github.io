@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>World Tourist Destinations - History, Culture & Highlights</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* Reset and base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 24px 16px;
+      scroll-behavior: smooth;
+    }
+    a {
+      color: #10b981;
+      text-decoration: none;
+    }
+    a:hover,
+    a:focus {
+      text-decoration: underline;
+    }
+
+    header {
+      max-width: 900px;
+      margin: 0 auto 48px;
+      text-align: center;
+    }
+    header h1 {
+      font-weight: 800;
+      font-size: 2.8rem;
+      letter-spacing: 1.2px;
+      margin-bottom: 8px;
+      color: #22c55e;
+    }
+    header p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      gap: 48px;
+    }
+
+    section.destination-card {
+      background: rgba(255 255 255 / 0.05);
+      border-radius: 16px;
+      padding: 24px 32px;
+      box-shadow:
+        0 4px 10px rgb(16 185 129 / 0.2),
+        0 0 12px rgb(16 185 129 / 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    section.destination-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    section.destination-card h2 {
+      color: #22c55e;
+      font-weight: 700;
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    section.destination-card h3 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: #a7f3d0;
+    }
+    section.destination-card img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgb(16 185 129 / 0.25);
+    }
+    section.destination-card p,
+    section.destination-card ul {
+      font-size: 1rem;
+      color: #d1d5db;
+    }
+    section.destination-card ul {
+      padding-left: 20px;
+      list-style-type: disc;
+    }
+    section.destination-card ul li {
+      margin-bottom: 8px;
+      max-width: 600px;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      main {
+        grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+      }
+      section.destination-card {
+        flex-direction: column;
+        padding: 28px 36px;
+      }
+    }
+    @media (max-width: 767px) {
+      section.destination-card {
+        padding: 20px 20px;
+      }
+    }
+
+    /* Animations */
+    @media (prefers-reduced-motion: no-preference) {
+      section.destination-card {
+        will-change: opacity, transform;
+      }
+    }
+
+    footer {
+      margin: 64px auto 24px;
+      max-width: 900px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>World Tourist Destinations</h1>
+    <p>
+      Explore the rich history, vibrant culture, and finest highlights of
+      five iconic destinations across the globe.
+    </p>
+  </header>
+  <main>
+    <!-- Paris -->
+    <section class="destination-card" id="paris">
+      <h2>Paris, France</h2>
+      <img
+        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c7f4cfba-6fbe-4ee2-b77c-c481fabe23b3.png"
+        alt="Iconic Eiffel Tower at sunset in Paris, France, surrounded by cityscape with warm ambient light"
+      />
+      <h3>Historical Context</h3>
+      <p>
+        Paris, famously called "The City of Light," has been a major center of
+        finance, commerce, science, and the arts since the 17th century. Rich
+        in history, it was a focal point during the Renaissance, the French
+        Revolution, and played pivotal roles in both World Wars.
+      </p>
+      <h3>Culture</h3>
+      <p>
+        Known for its enduring influence on art and fashion, Paris is home to
+        world-renowned museums like the Louvre and Orsay, exquisite cuisine,
+        and a vibrant café culture. The city's romantic streets and landmarks
+        attract millions annually.
+      </p>
+      <h3>Highlights</h3>
+      <ul>
+        <li>The Eiffel Tower and Champs-Élysées</li>
+        <li>World-class museums and galleries</li>
+        <li>Historic neighborhoods like Montmartre & Le Marais</li>
+        <li>Parisian cuisine and Michelin-starred dining</li>
+      </ul>
+    </section>
+
+    <!-- Kyoto -->
+    <section class="destination-card" id="kyoto">
+      <h2>Kyoto, Japan</h2>
+      <img
+        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f1c50679-d915-4da7-8b56-a381a46a7a03.png"
+        alt="Golden Pavilion Kinkaku-ji reflected in a tranquil pond surrounded by lush greenery in Kyoto, Japan"
+      />
+      <h3>Historical Context</h3>
+      <p>
+        Kyoto served as Japan's capital and emperor's residence for over a
+        millennium from 794 to 1868. The city retains its historical charm with
+        over 1,600 Buddhist temples, Shinto shrines, and traditional wooden
+        machiya houses.
+      </p>
+      <h3>Culture</h3>
+      <p>
+        Kyoto is the heart of traditional Japanese culture — famed for tea
+        ceremonies, geisha districts, ikebana flower arrangement, and stunning
+        seasonal festivals. It remains a bastion of craftsmanship and spirituality.
+      </p>
+      <h3>Highlights</h3>
+      <ul>
+        <li>The Golden Pavilion (Kinkaku-ji) and Fushimi Inari Shrine</li>
+        <li>Historic Gion district and traditional teahouses</li>
+        <li>Stunning cherry blossoms and autumn foliage</li>
+        <li>Traditional Japanese gardens and Zen temples</li>
+      </ul>
+    </section>
+
+    <!-- Rio de Janeiro -->
+    <section class="destination-card" id="rio">
+      <h2>Rio de Janeiro, Brazil</h2>
+      <img
+        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/49ef3b60-466c-4c9e-9cee-86658eb91080.png"
+        alt="Christ the Redeemer statue overlooking the city and beaches of Rio de Janeiro, Brazil on a sunny day"
+      />
+      <h3>Historical Context</h3>
+      <p>
+        Founded in 1565, Rio was Brazil's capital for nearly two centuries and
+        has grown into a bustling metropolis. It reflects a mélange of
+        indigenous, Portuguese, African, and immigrant influences shaping its
+        history and society.
+      </p>
+      <h3>Culture</h3>
+      <p>
+        Rio is famed for its lively Carnival festival, samba music and dance,
+        vibrant street art, and passionate sports culture. The city's beach
+        lifestyle and natural backdrops blend urban energy with breathtaking
+        nature.
+      </p>
+      <h3>Highlights</h3>
+      <ul>
+        <li>Christ the Redeemer statue and Sugarloaf Mountain</li>
+        <li>Copacabana and Ipanema beaches</li>
+        <li>World-famous Carnival celebrations</li>
+        <li>Thriving samba clubs and street art scenes</li>
+      </ul>
+    </section>
+
+    <!-- New York -->
+    <section class="destination-card" id="newyork">
+      <h2>New York, USA</h2>
+      <img
+        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fa4721a5-1add-45bb-abc1-cf77a91ddf03.png"
+        alt="The Statue of Liberty with Manhattan skyline in the background on a clear day in New York City, USA"
+      />
+      <h3>Historical Context</h3>
+      <p>
+        Founded in 1624 by Dutch settlers, New York became a gateway for
+        millions of immigrants entering the United States. It evolved into the
+        largest U.S. city and a global center for finance, culture, and media.
+      </p>
+      <h3>Culture</h3>
+      <p>
+        Known as "The City That Never Sleeps," New York is a melting pot of
+        diverse cultures, iconic arts scenes (Broadway, museums), and culinary
+        innovation. Its boroughs offer unique urban experiences around the clock.
+      </p>
+      <h3>Highlights</h3>
+      <ul>
+        <li>Statue of Liberty and Ellis Island</li>
+        <li>Broadway theaters and Central Park</li>
+        <li>World-class museums like MoMA and MET</li>
+        <li>Distinct neighborhoods like Harlem, Brooklyn, and Chinatown</li>
+      </ul>
+    </section>
+
+    <!-- Cairo -->
+    <section class="destination-card" id="cairo">
+      <h2>Cairo, Egypt</h2>
+      <img
+        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6174926f-8c1c-4976-8d19-b94f6095476c.png"
+        alt="The Great Pyramids of Giza under a bright blue sky near Cairo, Egypt with a camel in the foreground"
+      />
+      <h3>Historical Context</h3>
+      <p>
+        Cairo, founded in the 10th century, is one of the oldest capitals in the
+        Arab world. It sits adjacent to the ancient pyramids and reflects a
+        history stretching back to the powerful pharaoh dynasties of Egypt.
+      </p>
+      <h3>Culture</h3>
+      <p>
+        The city pulses with a rich Islamic, Coptic, and Pharaonic heritage.
+        Cairo’s bazaars, mosques, museums, and music scene celebrate millennia
+        of civilization blending tradition with modern life.
+      </p>
+      <h3>Highlights</h3>
+      <ul>
+        <li>The Great Pyramids and Sphinx of Giza</li>
+        <li>The Egyptian Museum and Khan El Khalili bazaar</li>
+        <li>Historic Islamic architecture and mosques</li>
+        <li>Luxor temples and Nile river cruises nearby</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2024 World Tourist Destinations. All rights reserved.
+  </footer>
+
+  <script>
+    // Intersection Observer to reveal cards on scroll
+    const cards = document.querySelectorAll('.destination-card');
+    const options = {
+      threshold: 0.15,
+    };
+    function revealCard(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }
+    const observer = new IntersectionObserver(revealCard, options);
+    cards.forEach((card) => observer.observe(card));
+  </script>
+</body>
+</html>
+
