@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asistencias 2026 - Colegio Militar</title>
+<link rel="stylesheet" href="css/estilos.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #003366;
+  }
+  label {
+    font-weight: bold;
+  }
+  select, button {
+    padding: 8px;
+    margin: 10px;
+  }
+  table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+  }
+  th {
+    background: #003366;
+    color: white;
+  }
+  .btn-guardar {
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 8px 15px;
+    border-radius: 4px;
+  }
+  .btn-guardar:hover {
+    background: #218838;
+  }
+  .btn-cmac {
+    background: #0066cc;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-cmac:hover {
+    background: #004c99;
+  }
+</style>
+</head>
+<body>
+
+<h1>Registro de Asistencias 2026</h1>
+
+<!-- Botón de retorno CMAC -->
+<div style="text-align:center; margin-bottom:20px;">
+  <a href="index.html" class="btn-cmac">CMAC</a>
+</div>
+
+<!-- Selector de grado -->
+<div style="text-align:center; margin-bottom:15px;">
+  <label for="grado">Selecciona el grado:</label>
+  <select id="grado" onchange="cargarAlumnos()">
+    <option value="">-- Selecciona --</option>
+    <option value="4° Grado">4° Grado</option>
+    <option value="5° Grado">5° Grado</option>
+    <option value="6° Grado">6° Grado</option>
+    <option value="7° Grado">7° Grado</option>
+    <option value="8° Grado">8° Grado</option>
+    <option value="9° Grado">9° Grado</option>
+    <option value="1° Bachillerato">1° Bachillerato</option>
+    <option value="2° Bachillerato">2° Bachillerato</option>
+  </select>
+</div>
+
+<!-- Tabla dinámica -->
+<form id="asistenciaForm">
+  <table id="tablaAlumnos">
+    <thead>
+      <tr>
+        <th>Número de Lista</th>
+        <th>Grado</th>
+        <th>Presente</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Alumnos generados dinámicamente -->
+    </tbody>
+  </table>
+
+  <div style="text-align:center; margin-top:15px;">
+    <button type="button" class="btn-guardar" onclick="guardarAsistencias()">Guardar Asistencias</button>
+  </div>
+</form>
+
+<!-- Script con toda la lógica -->
+<script>
+  let tbody = document.querySelector("#tablaAlumnos tbody");
+
+  // Configuración: cantidad de alumnos por grado
+  const gradosConfig = {
+    "4° Grado": 20,
+    "5° Grado": 20,
+    "6° Grado": 20,
+    "7° Grado": 20,
+    "8° Grado": 20,
+    "9° Grado": 20,
+    "1° Bachillerato": 30,
+    "2° Bachillerato": 30
+  };
+
+  // Función para cargar alumnos de un grado seleccionado
+  function cargarAlumnos(){
+    const grado = document.getElementById("grado").value;
+    tbody.innerHTML = ""; // limpiar tabla antes de llenar
+
+    if (!grado) return; // si no se selecciona nada, no hacer nada
+
+    let count = gradosConfig[grado];
+    for(let i=1;i<=count;i++){
+        let tr = document.createElement("tr");
+        tr.setAttribute("data-grado",grado);
+
+        let tdNumero = document.createElement("td");
+        tdNumero.innerText = i; // número de lista
+
+        let tdGrado = document.createElement("td");
+        tdGrado.innerText = grado;
+
+        let tdCheck = document.createElement("td");
+        let input = document.createElement("input");
+        input.type = "checkbox";
+        tdCheck.appendChild(input);
+
+        tr.appendChild(tdNumero);
+        tr.appendChild(tdGrado);
+        tr.appendChild(tdCheck);
+
+        tbody.appendChild(tr);
+    }
+  }
+
+  // Función para guardar asistencias en localStorage
+  function guardarAsistencias(){
+      const grado = document.getElementById("grado").value;
+      if (!grado){
+          alert("⚠️ Selecciona un grado primero");
+          return;
+      }
+
+      const filas = document.querySelectorAll("#tablaAlumnos tbody tr");
+      let hoy = new Date().toISOString().split("T")[0]; // formato YYYY-MM-DD
+      let asistenciasGrado = {};
+
+      filas.forEach(fila=>{
+          let numero = fila.cells[0].innerText; // número de lista
+          let estado = fila.querySelector("input[type='checkbox']").checked ? "P":"A";
+          asistenciasGrado[numero] = {estado:estado};
+      });
+
+      // Guardar en localStorage: estructura [fecha][grado][numero]
+      let registros = JSON.parse(localStorage.getItem("asistencias")) || {};
+      if (!registros[hoy]) registros[hoy] = {};
+      registros[hoy][grado] = asistenciasGrado;
+
+      localStorage.setItem("asistencias", JSON.stringify(registros));
+      alert("✅ Asistencias guardadas para " + grado + " en " + hoy);
+  }
+</script>
+
+</body>
+</html>

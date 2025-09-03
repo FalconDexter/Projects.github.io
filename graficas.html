@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gráficas de Asistencia - Colegio Militar</title>
+<link rel="stylesheet" href="css/estilos.css">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- SheetJS para Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<!-- jsPDF para PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- html2canvas para capturar gráficas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+  h1 { text-align:center; color:#003366; }
+  .graficas-container { display:flex; flex-wrap:wrap; justify-content:center; gap:30px; margin-top:20px; }
+  .grafica-box { width:45%; background:white; padding:20px; border:1px solid #ccc; border-radius:5px; }
+  select, button { padding:8px; margin:10px; }
+  .btn-cmac { background:#0066cc; color:white; border:none; cursor:pointer; padding:8px 15px; border-radius:4px; text-decoration:none; display:inline-block; }
+  .btn-cmac:hover { background:#004c99; }
+  .btn-export { background:#28a745; color:white; border:none; cursor:pointer; padding:8px 15px; border-radius:4px; }
+  .btn-export:hover { background:#218838; }
+  .btn-pdf { background:#dc3545; color:white; border:none; cursor:pointer; padding:8px 15px; border-radius:4px; }
+  .btn-pdf:hover { background:#b52b27; }
+</style>
+</head>
+<body>
+
+<h1>Gráficas de Asistencia</h1>
+
+<!-- Botón CMAC y Exportar -->
+<div style="text-align:center; margin-bottom:20px;">
+  <a href="index.html" class="btn-cmac">CMAC</a>
+  <button class="btn-export" onclick="exportarExcel()">Exportar a Excel</button>
+  <button class="btn-pdf" onclick="exportarPDF()">Exportar a PDF</button>
+</div>
+
+<!-- Filtros -->
+<div style="text-align:center;">
+  <label for="filtro">Filtro:</label>
+  <select id="filtro" onchange="actualizarGraficas()">
+    <option value="diaria">Diaria</option>
+    <option value="semanal">Semanal</option>
+    <option value="mensual">Mensual</option>
+  </select>
+
+  <label for="grado">Grado:</label>
+  <select id="grado" onchange="actualizarGraficas()">
+    <option value="todos">Todos</option>
+    <option value="4° Grado">4° Grado</option>
+    <option value="5° Grado">5° Grado</option>
+    <option value="6° Grado">6° Grado</option>
+    <option value="7° Grado">7° Grado</option>
+    <option value="8° Grado">8° Grado</option>
+    <option value="9° Grado">9° Grado</option>
+    <option value="1° Bachillerato">1° Bachillerato</option>
+    <option value="2° Bachillerato">2° Bachillerato</option>
+  </select>
+</div>
+
+<!-- Contenedor de gráficas -->
+<div class="graficas-container" id="graficasCaptura">
+  <div class="grafica-box"><canvas id="grafica1"></canvas></div>
+  <div class="grafica-box"><canvas id="grafica2"></canvas></div>
+  <div class="grafica-box"><canvas id="grafica3"></canvas></div>
+  <div class="grafica-box"><canvas id="grafica4"></canvas></div>
+</div>
+
+<script>
+let chart1, chart2, chart3, chart4;
+
+// Funciones de datos
+function obtenerDatos() {
+    let registros = JSON.parse(localStorage.getItem("asistencias")) || {};
+    return registros;
+}
+function calcularPorcentaje(asistencias) {
+    let total = Object.keys(asistencias).length;
+    if(total===0) return 0;
+    let presentes = Object.values(asistencias).filter(a=>a.estado==="P").length;
+    return ((presentes/total)*100).toFixed(1);
+}
+function filtrarPorFecha(datos, inicio, fin) {
+    let resultado = {};
+    for(let fecha in datos){
+        if(fecha >= inicio && fecha <= fin){
+            resultado[fecha] = datos[fecha];
+        }
+    }
+    return resultado;
+}
+
+// Actualizar gráficas
+function actualizarGraficas(){
+    let filtro = document.getElementById("filtro").value;
+    let gradoSel = document.getElementById("grado").value;
+    let datos = obtenerDatos();
+
+    let hoy = new Date();
+    let inicioSemana = new Date(hoy); inicioSemana.setDate(hoy.getDate()-6);
+    let inicioMes = new Date(hoy); inicioMes.setDate(1);
+
+    let porGrado = {};
+    for(let g of ["4° Grado","5° Grado","6° Grado","7° Grado","8° Grado","9° Grado","1° Bachillerato","2° Bachillerato"]){
+        porGrado[g] = 0;
+    }
+
+    let fechas = [];
+    let porcentajes = [];
+
+    if(filtro==="diaria"){
+        let fechaStr = hoy.toISOString().split("T")[0];
+        if(datos[fechaStr]){
+            for(let g in datos[fechaStr]){
+                if(gradoSel==="todos" || g===gradoSel){
+                    porGrado[g] = calcularPorcentaje(datos[fechaStr][g]);
+                }
+            }
+        }
+    } else if(filtro==="semanal"){
+        let ini = inicioSemana.toISOString().split("T")[0];
+        let fin = hoy.toISOString().split("T")[0];
+        let datosFiltrados = filtrarPorFecha(datos, ini, fin);
+        for(let fecha in datosFiltrados){
+            fechas.push(fecha);
+            let suma=0, count=0;
+            for(let g in datosFiltrados[fecha]){
+                if(gradoSel==="todos" || g===gradoSel){
+                    suma += parseFloat(calcularPorcentaje(datosFiltrados[fecha][g]));
+                    count++;
+                }
+            }
+            porcentajes.push(count? (suma/count).toFixed(1):0);
+        }
+    } else if(filtro==="mensual"){
+        let ini = inicioMes.toISOString().split("T")[0];
+        let fin = hoy.toISOString().split("T")[0];
+        let datosFiltrados = filtrarPorFecha(datos, ini, fin);
+        for(let fecha in datosFiltrados){
+            fechas.push(fecha);
+            let suma=0, count=0;
+            for(let g in datosFiltrados[fecha]){
+                if(gradoSel==="todos" || g===gradoSel){
+                    suma += parseFloat(calcularPorcentaje(datosFiltrados[fecha][g]));
+                    count++;
+                }
+            }
+            porcentajes.push(count? (suma/count).toFixed(1):0);
+        }
+    }
+
+    if(chart1) chart1.destroy();
+    if(chart2) chart2.destroy();
+    if(chart3) chart3.destroy();
+    if(chart4) chart4.destroy();
+
+    chart1 = new Chart(document.getElementById("grafica1"), {
+        type:'bar',
+        data:{ labels: Object.keys(porGrado), datasets:[{label:'% Asistencia', data:Object.values(porGrado), backgroundColor:'rgba(0,102,204,0.7)'}] },
+        options:{ responsive:true, scales:{y:{beginAtZero:true,max:100}} }
+    });
+
+    chart2 = new Chart(document.getElementById("grafica2"), {
+        type:'line',
+        data:{ labels: fechas.length? fechas:["Hoy"], datasets:[{label:'% Asistencia', data:porcentajes.length? porcentajes:[0], borderColor:'rgba(40,167,69,0.7)', fill:false}] },
+        options:{ responsive:true, scales:{y:{beginAtZero:true,max:100}} }
+    });
+
+    chart3 = new Chart(document.getElementById("grafica3"), {
+        type:'pie',
+        data:{ labels:Object.keys(porGrado), datasets:[{data:Object.values(porGrado), backgroundColor:['#003366','#0066cc','#28a745','#ffc107','#dc3545','#6610f2','#20c997','#fd7e14']}] }
+    });
+
+    chart4 = new Chart(document.getElementById("grafica4"), {
+        type:'doughnut',
+        data:{ labels:Object.keys(porGrado), datasets:[{data:Object.values(porGrado), backgroundColor:['#003366','#0066cc','#28a745','#ffc107','#dc3545','#6610f2','#20c997','#fd7e14']}] }
+    });
+}
+
+// Exportar a Excel
+function exportarExcel(){
+    let datos = obtenerDatos();
+    let wb = XLSX.utils.book_new();
+    for(let fecha in datos){
+        let ws_data = [["Grado","Número de Lista","Estado"]];
+        for(let grado in datos[fecha]){
+            for(let num in datos[fecha][grado]){
+                ws_data.push([grado,num,datos[fecha][grado][num].estado]);
+            }
+        }
+        let ws = XLSX.utils.aoa_to_sheet(ws_data);
+        XLSX.utils.book_append_sheet(wb, ws, fecha);
+    }
+    XLSX.writeFile(wb, "Asistencias.xlsx");
+}
+
+// Exportar a PDF
+async function exportarPDF(){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p','pt','a4');
+    const contenedor = document.getElementById("graficasCaptura");
+    await html2canvas(contenedor).then(canvas=>{
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = 500;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        doc.addImage(imgData, 'PNG', 50, 20, imgWidth, imgHeight);
+        doc.save("Asistencias.pdf");
+    });
+}
+
+actualizarGraficas();
+</script>
+
+</body>
+</html>
